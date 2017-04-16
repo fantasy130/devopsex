@@ -1,0 +1,18 @@
+node {
+    parallel firstTask:{
+        stage("Build Package") {
+            sh 'cp /appvol/playbooks/files/a.war "${WORKSPACE}"'
+        }
+    },
+    secondTask:{
+        stage("Prepare QA Enviroment") {
+            sh 'ansible-playbook /appvol/playbooks/tomcat-prepare.yml'
+        }
+    }
+    stage("Archive Artifacts") {
+        archive 'a.war' 
+    }
+    stage("Deploy dynamic resource") {
+        sh 'ansible-playbook /appvol/playbooks/tomcat-deploy.yml'
+    }
+}
